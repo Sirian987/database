@@ -1,0 +1,18 @@
+{
+  "users": [
+    {
+      "googleId": "101384251324861584173",
+      "username": "Putu Xml",
+      "email": "putuxml@gmail.com"
+    }
+  ],
+  "pastes": [
+    {
+      "id": "0l3e9b8e",
+      "content": "const axios = require('axios');\r\n\r\nconst texttoimage = async (\r\n  prompt = '',\r\n  negativePrompt = '',\r\n  sampler = 'Euler a',\r\n  width = 832,\r\n  height = 1216,\r\n  cfg = 0.55,\r\n  denoise = 1.5,\r\n  seed = 0,\r\n  hiresFix = true,\r\n  steps = 6,\r\n  batchSize = 25\r\n) => {\r\n  const samplers = [\r\n    'DPM++ 2M Karras',\r\n    'DPM++ SDE Karras',\r\n    'DPM++ 2M SDE Karras',\r\n    'Euler',\r\n    'Euler a',\r\n    'DDIM'\r\n  ];\r\n\r\n  if (!samplers.includes(sampler)) throw new Error('Invalid sampler');\r\n\r\n  const sessionHash = Math.random().toString(36).slice(2);\r\n  const base = 'https://frogleo-anime-ai-generator.hf.space/gradio_api';\r\n\r\n  const payload = {\r\n    data: [\r\n      prompt,\r\n      negativePrompt,\r\n      width,\r\n      height,\r\n      sampler,\r\n      cfg,\r\n      denoise,\r\n      seed,\r\n      hiresFix,\r\n      steps,\r\n      batchSize\r\n    ],\r\n    event_data: null,\r\n    fn_index: 0,\r\n    trigger_id: 29,\r\n    session_hash: sessionHash\r\n  };\r\n\r\n  await axios.post(`${base}/queue/join`, payload, {\r\n    headers: { 'Content-Type': 'application/json' }\r\n  });\r\n\r\n  const endpoint = `${base}/queue/data?session_hash=${sessionHash}`;\r\n  const start = Date.now();\r\n  const timeout = 180000;\r\n\r\n  while (Date.now() - start < timeout) {\r\n    const { data: raw } = await axios.get(endpoint);\r\n    const chunks = raw.split('\\n\\n');\r\n\r\n    for (const chunk of chunks) {\r\n      if (chunk.startsWith('data:')) {\r\n        const json = JSON.parse(chunk.slice(6));\r\n        if (json.msg === 'process_completed') {\r\n          const url = json.output?.data?.[0]?.url;\r\n          if (!url) throw new Error('no image url found');\r\n          return url;\r\n        }\r\n        if (json.msg === 'queue_full') {\r\n          throw new Error('queue full');\r\n        }\r\n      }\r\n    }\r\n\r\n    await new Promise(r => setTimeout(r, 2000));\r\n  }\r\n\r\n  throw new Error('timeout');\r\n};\r\n\r\n// Cara menggunakan \r\ntexttoimage('masterpiece, miku', 'bad hands', 'DPM++ 2M SDE Karras')",
+      "language": "js",
+      "user": "Putu Xml",
+      "createdAt": 1754132068513
+    }
+  ]
+}
