@@ -1,9 +1,11 @@
 {
-  "users": [
+  "pastes": [
     {
-      "googleId": "101384251324861584173",
-      "username": "Putu Xml",
-      "email": "putuxml@gmail.com"
+      "id": "bev7tqcf",
+      "content": "Ttggg",
+      "language": "js",
+      "user": "Putu Xml",
+      "createdAt": 1754189355974
     }
   ]
 }
